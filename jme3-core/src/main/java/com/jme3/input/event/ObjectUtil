@@ -1,0 +1,34 @@
+package com.jme3.input.event;
+
+/**
+ * Created by antonis on 21/2/2017.
+ */
+public class ObjectUtil {
+
+    float f;
+    boolean b;
+
+    public ObjectUtil(boolean bool, float fl){
+        this.f = fl;
+        this.b = bool;
+    }
+
+    public float getF() {
+        return f;
+    }
+
+    public boolean isB() {
+        return b;
+    }
+
+
+
+    public void setF(float f) {
+        this.f = f;
+    }
+
+    public void setB(boolean b) {
+        this.b = b;
+    }
+
+}
