@@ -1,0 +1,94 @@
+package com.jme3.texture.plugins;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ * Created by antonis on 21/2/2017.
+ */
+public class HeaderFields {
+
+    private int idLength;
+    private int colorMapType;
+    private int imageType;
+    private short cMapLength;
+    private int cMapDepth;
+    private int width;
+
+    private int height;
+    private int pixelDepth;
+    private int imageDescriptor;
+    boolean flipH;
+    private DataInputStream dis;
+
+    public HeaderFields(InputStream in, boolean flip) throws IOException{
+        dis = new DataInputStream(new BufferedInputStream(in));
+        this.idLength = dis.readUnsignedByte();
+        this.colorMapType = dis.readUnsignedByte();
+        this.imageType = dis.readUnsignedByte();
+        this.cMapLength = StaticUtils.flipEndian(dis.readShort());
+        this.cMapDepth = dis.readUnsignedByte();
+        this.width = StaticUtils.flipEndian(dis.readShort());
+        this.height = StaticUtils.flipEndian(dis.readShort());
+        this.pixelDepth = StaticUtils.flipEndian(dis.readShort());
+        this.imageDescriptor = dis.readUnsignedByte();
+
+        if ((imageDescriptor & 32) != 0) // bit 5 : if 1, flip top/bottom ordering
+        {
+            flip = !flip;
+        }
+    }
+
+
+    public int getIdLength() {
+        return idLength;
+    }
+
+    public void setIdLength(int idLength) throws IOException{
+        if (this.idLength > 0) {
+            dis.skip(idLength);
+        }
+        this.idLength = idLength;
+    }
+
+    public int getColorMapType() {
+        return colorMapType;
+    }
+
+    public int getImageType() {
+        return imageType;
+    }
+
+    public short getcMapLength() {
+        return cMapLength;
+    }
+
+    public int getcMapDepth() {
+        return cMapDepth;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getPixelDepth() {
+        return pixelDepth;
+    }
+
+    public int getImageDescriptor() {
+        return imageDescriptor;
+    }
+
+    public boolean isFlipH() {
+        if ((imageDescriptor & 16) != 0) // bit 4 : if 1, flip left/right ordering
+            flipH = !flipH;
+        return flipH;
+    }
+
+}
