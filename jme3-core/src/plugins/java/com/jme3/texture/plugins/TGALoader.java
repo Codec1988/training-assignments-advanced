@@ -89,6 +89,7 @@ public final class TGALoader implements AssetLoader {
         }
     }
 
+
     /**
      * <code>loadImage</code> is a manual image loader which is entirely
      * independent of AWT. OUT: RGB888 or RGBA8888 Image object
@@ -104,67 +105,14 @@ public final class TGALoader implements AssetLoader {
      * @throws java.io.IOException
      */
     public static Image load(InputStream in, boolean flip) throws IOException {
-        boolean flipH = false;
 
-        // open a stream to the file
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(in));
-
-        // ---------- Start Reading the TGA header ---------- //
-        // length of the image id (1 byte)
-        int idLength = dis.readUnsignedByte();
-
-        // Type of color map (if any) included with the image
-        // 0 - no color map data is included
-        // 1 - a color map is included
-        int colorMapType = dis.readUnsignedByte();
-
-        // Type of image being read:
-        int imageType = dis.readUnsignedByte();
-
-        // Read Color Map Specification (5 bytes)
-        // Index of first color map entry (if we want to use it, uncomment and remove extra read.)
-//        short cMapStart = flipEndian(dis.readShort());
-        dis.readShort();
-        // number of entries in the color map
-        short cMapLength = flipEndian(dis.readShort());
-        // number of bits per color map entry
-        int cMapDepth = dis.readUnsignedByte();
-
-        // Read Image Specification (10 bytes)
-        // horizontal coordinate of lower left corner of image. (if we want to use it, uncomment and remove extra read.)
-//        int xOffset = flipEndian(dis.readShort());
-        dis.readShort();
-        // vertical coordinate of lower left corner of image. (if we want to use it, uncomment and remove extra read.)
-//        int yOffset = flipEndian(dis.readShort());
-        dis.readShort();
-        // width of image - in pixels
-        int width = flipEndian(dis.readShort());
-        // height of image - in pixels
-        int height = flipEndian(dis.readShort());
-        // bits per pixel in image.
-        int pixelDepth = dis.readUnsignedByte();
-        int imageDescriptor = dis.readUnsignedByte();
-        if ((imageDescriptor & 32) != 0) // bit 5 : if 1, flip top/bottom ordering
-        {
-            flip = !flip;
-        }
-        if ((imageDescriptor & 16) != 0) // bit 4 : if 1, flip left/right ordering
-        {
-            flipH = !flipH;
-        }
-
-        // ---------- Done Reading the TGA header ---------- //
-
-        // Skip image ID
-        if (idLength > 0) {
-            dis.skip(idLength);
-        }
+        HeaderFields headerFields = new HeaderFields(in, flip);
 
         ColorMapEntry[] cMapEntries = null;
-        if (colorMapType != 0) {
+        if (headerFields.getColorMapType() != 0) {
             // read the color map.
-            int bytesInColorMap = (cMapDepth * cMapLength) >> 3;
-            int bitsPerColor = Math.min(cMapDepth / 3, 8);
+            int bytesInColorMap = (headerFields.getcMapDepth() * headerFields.getcMapLength()) >> 3;
+            int bitsPerColor = Math.min(headerFields.getcMapDepth() / 3, 8);
 
             byte[] cMapData = new byte[bytesInColorMap];
             dis.read(cMapData);
@@ -503,18 +451,7 @@ public final class TGALoader implements AssetLoader {
         return (byte) rVal;
     }
 
-    /**
-     * <code>flipEndian</code> is used to flip the endian bit of the header
-     * file.
-     * 
-     * @param signedShort
-     *            the bit to flip.
-     * @return the flipped bit.
-     */
-    private static short flipEndian(short signedShort) {
-        int input = signedShort & 0xFFFF;
-        return (short) (input << 8 | (input & 0xFF00) >>> 8);
-    }
+
 
     static class ColorMapEntry {
 
