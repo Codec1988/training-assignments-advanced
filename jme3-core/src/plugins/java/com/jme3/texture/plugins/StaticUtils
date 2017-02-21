@@ -1,0 +1,19 @@
+package com.jme3.texture.plugins;
+
+/**
+ * Created by antonis on 21/2/2017.
+ */
+public class StaticUtils {
+    /**
+     * <code>flipEndian</code> is used to flip the endian bit of the header
+     * file.
+     *
+     * @param signedShort
+     *            the bit to flip.
+     * @return the flipped bit.
+     */
+    static short flipEndian(short signedShort) {
+        int input = signedShort & 0xFFFF;
+        return (short) (input << 8 | (input & 0xFF00) >>> 8);
+    }
+}
