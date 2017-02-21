@@ -36,6 +36,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.export.OutputCapsule;
 import com.jme3.input.controls.*;
+import com.jme3.input.event.ObjectUtil;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -45,10 +46,12 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.util.clone.Cloner;
 import com.jme3.util.clone.JmeCloneable;
+
 import java.io.IOException;
 
 /**
  * A camera that follows a spatial and can turn around it by dragging the mouse
+ *
  * @author nehon
  */
 public class ChaseCamera implements ActionListener, AnalogListener, Control, JmeCloneable {
@@ -58,7 +61,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     protected float maxVerticalRotation = FastMath.PI / 2;
     protected float minDistance = 1.0f;
     protected float maxDistance = 40.0f;
-    protected float distance = 20;    
+    protected float distance = 20;
     protected float rotationSpeed = 1.0f;
     protected float rotation = 0;
     protected float trailingRotationInertia = 0.05f;
@@ -101,7 +104,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     protected Vector3f temp = new Vector3f(0, 0, 0);
     protected boolean invertYaxis = false;
     protected boolean invertXaxis = false;
-    
+
     /**
      * @deprecated use {@link CameraInput#CHASECAM_DOWN}
      */
@@ -143,7 +146,8 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Constructs the chase camera
-     * @param cam the application camera
+     *
+     * @param cam    the application camera
      * @param target the spatial to follow
      */
     public ChaseCamera(Camera cam, final Spatial target) {
@@ -155,6 +159,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Constructs the chase camera
      * if you use this constructor you have to attach the cam later to a spatial
      * doing spatial.addControl(chaseCamera);
+     *
      * @param cam the application camera
      */
     public ChaseCamera(Camera cam) {
@@ -166,7 +171,8 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Constructs the chase camera, and registers inputs
      * if you use this constructor you have to attach the cam later to a spatial
      * doing spatial.addControl(chaseCamera);
-     * @param cam the application camera
+     *
+     * @param cam          the application camera
      * @param inputManager the inputManager of the application to register inputs
      */
     public ChaseCamera(Camera cam, InputManager inputManager) {
@@ -176,8 +182,9 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Constructs the chase camera, and registers inputs
-     * @param cam the application camera
-     * @param target the spatial to follow
+     *
+     * @param cam          the application camera
+     * @param target       the spatial to follow
      * @param inputManager the inputManager of the application to register inputs
      */
     public ChaseCamera(Camera cam, final Spatial target, InputManager inputManager) {
@@ -203,7 +210,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
         }
 
     }
-
 
     public void onAnalog(String name, float value, float tpf) {
         if (name.equals(CameraInput.CHASECAM_MOVELEFT)) {
@@ -231,17 +237,18 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Registers inputs with the input manager
+     *
      * @param inputManager
      */
     public final void registerWithInput(InputManager inputManager) {
 
-        String[] inputs = {CameraInput.CHASECAM_TOGGLEROTATE,
-            CameraInput.CHASECAM_DOWN,
-            CameraInput.CHASECAM_UP,
-            CameraInput.CHASECAM_MOVELEFT,
-            CameraInput.CHASECAM_MOVERIGHT,
-            CameraInput.CHASECAM_ZOOMIN,
-            CameraInput.CHASECAM_ZOOMOUT};
+        String[] inputs = { CameraInput.CHASECAM_TOGGLEROTATE,
+                CameraInput.CHASECAM_DOWN,
+                CameraInput.CHASECAM_UP,
+                CameraInput.CHASECAM_MOVELEFT,
+                CameraInput.CHASECAM_MOVERIGHT,
+                CameraInput.CHASECAM_ZOOMIN,
+                CameraInput.CHASECAM_ZOOMOUT };
 
         this.inputManager = inputManager;
         if (!invertYaxis) {
@@ -265,13 +272,14 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
         inputManager.addListener(this, inputs);
     }
-    
+
     /**
-    * Cleans up the input mappings from the input manager.
-    * Undoes the work of registerWithInput().
-    * @param inputManager InputManager from which to cleanup mappings.
-    */
-    public void cleanupWithInput(InputManager mgr){
+     * Cleans up the input mappings from the input manager.
+     * Undoes the work of registerWithInput().
+     *
+     * @param inputManager InputManager from which to cleanup mappings.
+     */
+    public void cleanupWithInput(InputManager mgr) {
         mgr.deleteMapping(CameraInput.CHASECAM_TOGGLEROTATE);
         mgr.deleteMapping(CameraInput.CHASECAM_DOWN);
         mgr.deleteMapping(CameraInput.CHASECAM_UP);
@@ -287,6 +295,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * default are
      * new MouseButtonTrigger(MouseInput.BUTTON_LEFT)  left mouse button
      * new MouseButtonTrigger(MouseInput.BUTTON_RIGHT)  right mouse button
+     *
      * @param triggers
      */
     public void setToggleRotationTrigger(Trigger... triggers) {
@@ -299,6 +308,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Sets custom triggers for zooming in the cam
      * default is
      * new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true)  mouse wheel up
+     *
      * @param triggers
      */
     public void setZoomInTrigger(Trigger... triggers) {
@@ -311,6 +321,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Sets custom triggers for zooming out the cam
      * default is
      * new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false)  mouse wheel down
+     *
      * @param triggers
      */
     public void setZoomOutTrigger(Trigger... triggers) {
@@ -322,7 +333,8 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     protected void computePosition() {
 
         float hDistance = (distance) * FastMath.sin((FastMath.PI / 2) - vRotation);
-        pos.set(hDistance * FastMath.cos(rotation), (distance) * FastMath.sin(vRotation), hDistance * FastMath.sin(rotation));
+        pos.set(hDistance * FastMath.cos(rotation), (distance) * FastMath.sin(vRotation),
+                hDistance * FastMath.sin(rotation));
         pos.addLocal(target.getWorldTranslation());
     }
 
@@ -333,7 +345,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
         }
         rotating = true;
         targetRotation += value * rotationSpeed;
-
 
     }
 
@@ -386,146 +397,135 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Updates the camera, should only be called internally
      */
     protected void updateCamera(float tpf) {
-        if (enabled) {
-            targetLocation.set(target.getWorldTranslation()).addLocal(lookAtOffset);
-            if (smoothMotion) {
+        if (!enabled)
+            return;
 
-                //computation of target direction
-                targetDir.set(targetLocation).subtractLocal(prevPos);
-                float dist = targetDir.length();
+        targetLocation.set(target.getWorldTranslation()).addLocal(lookAtOffset);
+        if (smoothMotion) {
 
-                //Low pass filtering on the target postition to avoid shaking when physics are enabled.
-                if (offsetDistance < dist) {
-                    //target moves, start chasing.
-                    chasing = true;
-                    //target moves, start trailing if it has to.
-                    if (trailingEnabled) {
-                        trailing = true;
-                    }
-                    //target moves...
-                    targetMoves = true;
-                } else {
-                    //if target was moving, we compute a slight offset in rotation to avoid a rought stop of the cam
-                    //We do not if the player is rotationg the cam
-                    if (targetMoves && !canRotate) {
-                        if (targetRotation - rotation > trailingRotationInertia) {
-                            targetRotation = rotation + trailingRotationInertia;
-                        } else if (targetRotation - rotation < -trailingRotationInertia) {
-                            targetRotation = rotation - trailingRotationInertia;
-                        }
-                    }
-                    //Target stops
-                    targetMoves = false;
+            //computation of target direction
+            targetDir.set(targetLocation).subtractLocal(prevPos);
+            float dist = targetDir.length();
+
+            //Low pass filtering on the target postition to avoid shaking when physics are enabled.
+            if (offsetDistance < dist) {
+                //target moves, start chasing.
+                //target moves, start trailing if it has to.
+                if (trailingEnabled) {
+                    trailing = true;
                 }
-
-                //the user is rotating the cam by dragging the mouse
-                if (canRotate) {
-                    //reseting the trailing lerp factor
-                    trailingLerpFactor = 0;
-                    //stop trailing user has the control
-                    trailing = false;
-                }
-
-
-                if (trailingEnabled && trailing) {
-                    if (targetMoves) {
-                        //computation if the inverted direction of the target
-                        Vector3f a = targetDir.negate().normalizeLocal();
-                        //the x unit vector
-                        Vector3f b = Vector3f.UNIT_X;
-                        //2d is good enough
-                        a.y = 0;
-                        //computation of the rotation angle between the x axis and the trail
-                        if (targetDir.z > 0) {
-                            targetRotation = FastMath.TWO_PI - FastMath.acos(a.dot(b));
-                        } else {
-                            targetRotation = FastMath.acos(a.dot(b));
-                        }
-                        if (targetRotation - rotation > FastMath.PI || targetRotation - rotation < -FastMath.PI) {
-                            targetRotation -= FastMath.TWO_PI;
-                        }
-
-                        //if there is an important change in the direction while trailing reset of the lerp factor to avoid jumpy movements
-                        if (targetRotation != previousTargetRotation && FastMath.abs(targetRotation - previousTargetRotation) > FastMath.PI / 8) {
-                            trailingLerpFactor = 0;
-                        }
-                        previousTargetRotation = targetRotation;
+                //target moves...
+                chasing = true;
+                targetMoves = true;
+            } else {
+                //if target was moving, we compute a slight offset in rotation to avoid a rought stop of the cam
+                //We do not if the player is rotationg the cam
+                if (targetMoves && !canRotate) {
+                    if (targetRotation - rotation > trailingRotationInertia) {
+                        targetRotation = rotation + trailingRotationInertia;
+                    } else if (targetRotation - rotation < -trailingRotationInertia) {
+                        targetRotation = rotation - trailingRotationInertia;
                     }
-                    //computing lerp factor
-                    trailingLerpFactor = Math.min(trailingLerpFactor + tpf * tpf * trailingSensitivity, 1);
-                    //computing rotation by linear interpolation
-                    rotation = FastMath.interpolateLinear(trailingLerpFactor, rotation, targetRotation);
+                }
+                //Target stops
+                targetMoves = false;
+            }
 
-                    //if the rotation is near the target rotation we're good, that's over
-                    if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
-                        trailing = false;
+            //the user is rotating the cam by dragging the mouse
+            if (canRotate) {
+                //reseting the trailing lerp factor
+                trailingLerpFactor = 0;
+                //stop trailing user has the control
+                trailing = false;
+            }
+
+            if (trailingEnabled && trailing) {
+                if (targetMoves) {
+                    //computation if the inverted direction of the target
+                    Vector3f a = targetDir.negate().normalizeLocal();
+                    //the x unit vector
+                    Vector3f b = Vector3f.UNIT_X;
+                    //2d is good enough
+                    a.y = 0;
+                    //computation of the rotation angle between the x axis and the trail
+                    if (targetDir.z > 0) {
+                        targetRotation = FastMath.TWO_PI - FastMath.acos(a.dot(b));
+                    } else {
+                        targetRotation = FastMath.acos(a.dot(b));
+                    }
+                    if (targetRotation - rotation > FastMath.PI || targetRotation - rotation < -FastMath.PI) {
+                        targetRotation -= FastMath.TWO_PI;
+                    }
+
+                    //if there is an important change in the direction while trailing reset of the lerp factor to avoid jumpy movements
+                    if (targetRotation != previousTargetRotation
+                            && FastMath.abs(targetRotation - previousTargetRotation) > FastMath.PI / 8) {
                         trailingLerpFactor = 0;
                     }
+                    previousTargetRotation = targetRotation;
                 }
+                //computing lerp factor
+                trailingLerpFactor = Math.min(trailingLerpFactor + tpf * tpf * trailingSensitivity, 1);
+                //computing rotation by linear interpolation
+                rotation = FastMath.interpolateLinear(trailingLerpFactor, rotation, targetRotation);
 
-                //linear interpolation of the distance while chasing
-                if (chasing) {
-                    distance = temp.set(targetLocation).subtractLocal(cam.getLocation()).length();
-                    distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * chasingSensitivity * 0.05f), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
-                    if (targetDistance + 0.01f >= distance && targetDistance - 0.01f <= distance) {
-                        distanceLerpFactor = 0;
-                        chasing = false;
-                    }
+                //if the rotation is near the target rotation we're good, that's over
+                if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
+                    trailing = false;
+                    trailingLerpFactor = 0;
                 }
-
-                //linear interpolation of the distance while zooming
-                if (zooming) {
-                    distanceLerpFactor = Math.min(distanceLerpFactor + (tpf * tpf * zoomSensitivity), 1);
-                    distance = FastMath.interpolateLinear(distanceLerpFactor, distance, targetDistance);
-                    if (targetDistance + 0.1f >= distance && targetDistance - 0.1f <= distance) {
-                        zooming = false;
-                        distanceLerpFactor = 0;
-                    }
-                }
-
-                //linear interpolation of the rotation while rotating horizontally
-                if (rotating) {
-                    rotationLerpFactor = Math.min(rotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    rotation = FastMath.interpolateLinear(rotationLerpFactor, rotation, targetRotation);
-                    if (targetRotation + 0.01f >= rotation && targetRotation - 0.01f <= rotation) {
-                        rotating = false;
-                        rotationLerpFactor = 0;
-                    }
-                }
-
-                //linear interpolation of the rotation while rotating vertically
-                if (vRotating) {
-                    vRotationLerpFactor = Math.min(vRotationLerpFactor + tpf * tpf * rotationSensitivity, 1);
-                    vRotation = FastMath.interpolateLinear(vRotationLerpFactor, vRotation, targetVRotation);
-                    if (targetVRotation + 0.01f >= vRotation && targetVRotation - 0.01f <= vRotation) {
-                        vRotating = false;
-                        vRotationLerpFactor = 0;
-                    }
-                }
-                //computing the position
-                computePosition();
-                //setting the position at last
-                cam.setLocation(pos.addLocal(lookAtOffset));
-            } else {
-                //easy no smooth motion
-                vRotation = targetVRotation;
-                rotation = targetRotation;
-                distance = targetDistance;
-                computePosition();
-                cam.setLocation(pos.addLocal(lookAtOffset));
             }
-            //keeping track on the previous position of the target
-            prevPos.set(targetLocation);
 
-            //the cam looks at the target
-            cam.lookAt(targetLocation, initialUpVec);
+            //linear interpolation of the distance while chasing
+            if (chasing) {
+                ObjectUtil a = objectHelper(distanceLerpFactor, tpf, chasingSensitivity * 0.05f, rotation, targetRotation, rotating);
+                distanceLerpFactor = a.getF();
+                chasing = a.isB();
+            }
 
+            //linear interpolation of the distance while zooming
+            if (zooming) {
+                ObjectUtil a = objectHelper(distanceLerpFactor, tpf, rotationSensitivity, rotation, targetRotation, rotating);
+                distanceLerpFactor = a.getF();
+                zooming = a.isB();
+            }
+
+
+            //linear interpolation of the rotation while rotating horizontally
+            if (rotating || vRotating) {
+                ObjectUtil a = objectHelper(rotationLerpFactor, tpf, rotationSensitivity, rotation, targetRotation, rotating);
+                rotationLerpFactor = a.getF();
+                rotating = a.isB();
+            }
+
+
+        } else {
+            //easy no smooth motion
+            vRotation = targetVRotation;
+            rotation = targetRotation;
+            distance = targetDistance;
         }
+        computePosition();
+        cam.setLocation(pos.addLocal(lookAtOffset));
+        //keeping track on the previous position of the target
+        prevPos.set(targetLocation);
+
+        //the cam looks at the target
+        cam.lookAt(targetLocation, initialUpVec);
+
+    }
+
+    public static ObjectUtil objectHelper(float LerpFactor, float tpf, float sensitivity, float distance, float target, boolean operation){
+        LerpFactor = Math.min(LerpFactor + (tpf * tpf * sensitivity), 1);
+        distance = FastMath.interpolateLinear(LerpFactor, distance, target);
+        if (target + 0.1f >= distance && target - 0.1f <= distance)
+            return  new ObjectUtil(operation, LerpFactor);
+        return new ObjectUtil(operation, LerpFactor);
     }
 
     /**
      * Return the enabled/disabled state of the camera
+     *
      * @return true if the camera is enabled
      */
     public boolean isEnabled() {
@@ -534,6 +534,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Enable or disable the camera
+     *
      * @param enabled true to enable
      */
     public void setEnabled(boolean enabled) {
@@ -545,6 +546,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Returns the max zoom distance of the camera (default is 40)
+     *
      * @return maxDistance
      */
     public float getMaxDistance() {
@@ -553,6 +555,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the max zoom distance of the camera (default is 40)
+     *
      * @param maxDistance
      */
     public void setMaxDistance(float maxDistance) {
@@ -564,6 +567,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Returns the min zoom distance of the camera (default is 1)
+     *
      * @return minDistance
      */
     public float getMinDistance() {
@@ -582,6 +586,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * clone this camera for a spatial
+     *
      * @param spatial
      * @return
      */
@@ -593,25 +598,26 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
         return cc;
     }
 
-    @Override   
+    @Override
     public Object jmeClone() {
         ChaseCamera cc = new ChaseCamera(cam, inputManager);
         cc.target = target;
         cc.setMaxDistance(getMaxDistance());
         cc.setMinDistance(getMinDistance());
         return cc;
-    }     
+    }
 
-    @Override   
-    public void cloneFields( Cloner cloner, Object original ) { 
+    @Override
+    public void cloneFields(Cloner cloner, Object original) {
         this.target = cloner.clone(target);
         computePosition();
         prevPos = new Vector3f(target.getWorldTranslation());
         cam.setLocation(pos);
     }
-         
+
     /**
      * Sets the spacial for the camera control, should only be used internally
+     *
      * @param spatial
      */
     public void setSpatial(Spatial spatial) {
@@ -626,6 +632,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * update the camera control, should only be used internally
+     *
      * @param tpf
      */
     public void update(float tpf) {
@@ -634,6 +641,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * renders the camera control, should only be used internally
+     *
      * @param rm
      * @param vp
      */
@@ -643,6 +651,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Write the camera
+     *
      * @param ex the exporter
      * @throws IOException
      */
@@ -652,6 +661,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Read the camera
+     *
      * @param im
      * @throws IOException
      */
@@ -670,6 +680,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the maximal vertical rotation angle in radian of the camera around the target. Default is Pi/2;
+     *
      * @param maxVerticalRotation
      */
     public void setMaxVerticalRotation(float maxVerticalRotation) {
@@ -677,7 +688,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     }
 
     /**
-     *
      * @return The minimal vertical rotation angle in radian of the camera around the target
      */
     public float getMinVerticalRotation() {
@@ -686,6 +696,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the minimal vertical rotation angle in radian of the camera around the target default is 0;
+     *
      * @param minHeight
      */
     public void setMinVerticalRotation(float minHeight) {
@@ -701,6 +712,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Enables smooth motion for this chase camera
+     *
      * @param smoothMotion
      */
     public void setSmoothMotion(boolean smoothMotion) {
@@ -709,6 +721,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the chasing sensitivity
+     *
      * @return
      */
     public float getChasingSensitivity() {
@@ -716,10 +729,10 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     }
 
     /**
-     *
      * Sets the chasing sensitivity, the lower the value the slower the camera will follow the target when it moves
      * default is 5
      * Only has an effect if smoothMotion is set to true and trailing is enabled
+     *
      * @param chasingSensitivity
      */
     public void setChasingSensitivity(float chasingSensitivity) {
@@ -728,6 +741,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Returns the rotation sensitivity
+     *
      * @return
      */
     public float getRotationSensitivity() {
@@ -739,6 +753,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * default is 5, values over 5 should have no effect.
      * If you want a significant slow down try values below 1.
      * Only has an effect if smoothMotion is set to true
+     *
      * @param rotationSensitivity
      */
     public void setRotationSensitivity(float rotationSensitivity) {
@@ -747,6 +762,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns true if the trailing is enabled
+     *
      * @return
      */
     public boolean isTrailingEnabled() {
@@ -756,6 +772,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     /**
      * Enable the camera trailing : The camera smoothly go in the targets trail when it moves.
      * Only has an effect if smoothMotion is set to true
+     *
      * @param trailingEnabled
      */
     public void setTrailingEnabled(boolean trailingEnabled) {
@@ -763,8 +780,8 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     }
 
     /**
-     *
      * returns the trailing rotation inertia
+     *
      * @return
      */
     public float getTrailingRotationInertia() {
@@ -775,6 +792,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Sets the trailing rotation inertia : default is 0.1. This prevent the camera to roughtly stop when the target stops moving
      * before the camera reached the trail position.
      * Only has an effect if smoothMotion is set to true and trailing is enabled
+     *
      * @param trailingRotationInertia
      */
     public void setTrailingRotationInertia(float trailingRotationInertia) {
@@ -783,6 +801,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the trailing sensitivity
+     *
      * @return
      */
     public float getTrailingSensitivity() {
@@ -793,6 +812,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
      * Only has an effect if smoothMotion is set to true and trailing is enabled
      * Sets the trailing sensitivity, the lower the value, the slower the camera will go in the target trail when it moves.
      * default is 0.5;
+     *
      * @param trailingSensitivity
      */
     public void setTrailingSensitivity(float trailingSensitivity) {
@@ -801,6 +821,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the zoom sensitivity
+     *
      * @return
      */
     public float getZoomSensitivity() {
@@ -810,12 +831,13 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
     /**
      * Sets the zoom sensitivity, the lower the value, the slower the camera will zoom in and out.
      * default is 2.
+     *
      * @param zoomSensitivity
      */
     public void setZoomSensitivity(float zoomSensitivity) {
         this.zoomSensitivity = zoomSensitivity;
     }
-    
+
     /**
      * Returns the rotation speed when the mouse is moved.
      *
@@ -837,6 +859,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the default distance at start of application
+     *
      * @param defaultDistance
      */
     public void setDefaultDistance(float defaultDistance) {
@@ -846,6 +869,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * sets the default horizontal rotation in radian of the camera at start of the application
+     *
      * @param angleInRad
      */
     public void setDefaultHorizontalRotation(float angleInRad) {
@@ -855,6 +879,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * sets the default vertical rotation in radian of the camera at start of the application
+     *
      * @param angleInRad
      */
     public void setDefaultVerticalRotation(float angleInRad) {
@@ -864,7 +889,6 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * @return If drag to rotate feature is enabled.
-     *
      * @see FlyByCamera#setDragToRotate(boolean)
      */
     public boolean isDragToRotate() {
@@ -873,10 +897,10 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * @param dragToRotate When true, the user must hold the mouse button
-     * and drag over the screen to rotate the camera, and the cursor is
-     * visible until dragged. Otherwise, the cursor is invisible at all times
-     * and holding the mouse button is not needed to rotate the camera.
-     * This feature is disabled by default.
+     *                     and drag over the screen to rotate the camera, and the cursor is
+     *                     visible until dragged. Otherwise, the cursor is invisible at all times
+     *                     and holding the mouse button is not needed to rotate the camera.
+     *                     This feature is disabled by default.
      */
     public void setDragToRotate(boolean dragToRotate) {
         this.dragToRotate = dragToRotate;
@@ -886,10 +910,10 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * @param rotateOnlyWhenClose When this flag is set to false the chase
-     * camera will always rotate around its spatial independently of their
-     * distance to one another. If set to true, the chase camera will only
-     * be allowed to rotated below the "horizon" when the distance is smaller
-     * than minDistance + 1.0f (when fully zoomed-in).
+     *                            camera will always rotate around its spatial independently of their
+     *                            distance to one another. If set to true, the chase camera will only
+     *                            be allowed to rotated below the "horizon" when the distance is smaller
+     *                            than minDistance + 1.0f (when fully zoomed-in).
      */
     public void setDownRotateOnCloseViewOnly(boolean rotateOnlyWhenClose) {
         veryCloseRotation = rotateOnlyWhenClose;
@@ -906,6 +930,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * return the current distance from the camera to the target
+     *
      * @return
      */
     public float getDistanceToTarget() {
@@ -914,6 +939,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the current horizontal rotation around the target in radians
+     *
      * @return
      */
     public float getHorizontalRotation() {
@@ -922,6 +948,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the current vertical rotation around the target in radians.
+     *
      * @return
      */
     public float getVerticalRotation() {
@@ -930,6 +957,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * returns the offset from the target's position where the camera looks at
+     *
      * @return
      */
     public Vector3f getLookAtOffset() {
@@ -938,6 +966,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the offset from the target's position where the camera looks at
+     *
      * @param lookAtOffset
      */
     public void setLookAtOffset(Vector3f lookAtOffset) {
@@ -946,6 +975,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Sets the up vector of the camera used for the lookAt on the target
+     *
      * @param up
      */
     public void setUpVector(Vector3f up) {
@@ -954,6 +984,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * Returns the up vector of the camera used for the lookAt on the target
+     *
      * @return
      */
     public Vector3f getUpVector() {
@@ -970,6 +1001,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * invert the vertical axis movement of the mouse
+     *
      * @param invertYaxis
      */
     public void setInvertVerticalAxis(boolean invertYaxis) {
@@ -988,6 +1020,7 @@ public class ChaseCamera implements ActionListener, AnalogListener, Control, Jme
 
     /**
      * invert the Horizontal axis movement of the mouse
+     *
      * @param invertXaxis
      */
     public void setInvertHorizontalAxis(boolean invertXaxis) {
